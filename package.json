@@ -1,0 +1,43 @@
+{
+  "name": "cdek-analytics-dashboard",
+  "version": "1.0.0",
+  "description": "Интерактивная аналитическая панель для анализа данных обращений клиентов CDEK",
+  "main": "Index_standalone.html",
+  "scripts": {
+    "start": "python server.py",
+    "dev": "python -m http.server 8000",
+    "serve": "python server.py"
+  },
+  "keywords": [
+    "analytics",
+    "dashboard",
+    "cdek",
+    "charts",
+    "data-visualization",
+    "javascript",
+    "html",
+    "css"
+  ],
+  "author": "AlexDEV",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cdek-analytics-dashboard.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/cdek-analytics-dashboard/issues"
+  },
+  "homepage": "https://github.com/yourusername/cdek-analytics-dashboard#readme",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  },
+  "engines": {
+    "node": ">=14.0.0",
+    "python": ">=3.6.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
