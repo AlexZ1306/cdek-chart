@@ -42,11 +42,98 @@
         }
         
         /* Кастомная стрелочка для select */
-        #client-type-selector {
+        #client-type-selector, #status-selector {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
             background-position: right 8px center;
             background-repeat: no-repeat;
             background-size: 16px;
+        }
+
+        /* Стили для множественного выбора */
+        .multi-select-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .multi-select-button {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+            min-width: 200px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .multi-select-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .multi-select-button.active {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+
+        .multi-select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            z-index: 1000;
+            max-height: 320px;
+            overflow-y: auto;
+            display: none;
+            min-width: 360px;
+            width: max-content;
+        }
+
+        .multi-select-dropdown.show {
+            display: block;
+        }
+
+        .multi-select-option {
+            display: flex;
+            align-items: flex-start;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out;
+            gap: 8px;
+        }
+
+        .multi-select-option:hover {
+            background-color: #f3f4f6;
+        }
+
+        .multi-select-option input[type="checkbox"] {
+            margin-top: 2px;
+            accent-color: #10b981;
+        }
+
+        .multi-select-option label {
+            cursor: pointer;
+            flex: 1;
+            margin: 0;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.25;
+        }
+
+        .dropdown-arrow {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .dropdown-arrow.rotated {
+            transform: rotate(180deg);
         }
         .filter-btn:disabled {
             opacity: 0.5;
@@ -147,14 +234,59 @@
                 <!-- Выбор типа клиента -->
                 <div class="flex items-center">
                     <span class="text-sm font-medium text-gray-700 mr-3">Тип клиента:</span>
-                    <select id="client-type-selector" class="px-4 pr-8 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-200 rounded-md shadow-sm hover:bg-gray-200 focus:outline-none focus:bg-gray-200 transition-colors duration-200 text-center appearance-none">
-                        <option value="all">Все</option>
-                        <option value="cumulative">Общая</option>
-                        <option value="sender">Отправитель</option>
-                        <option value="receiver">Получатель</option>
-                        <option value="third_party">Третье лицо</option>
-                        <option value="not_specified">Не указан</option>
-                    </select>
+                    <div class="multi-select-container">
+                        <div class="multi-select-button" id="client-type-button">
+                            <span id="client-type-text">Все</span>
+                            <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="multi-select-dropdown" id="client-type-dropdown">
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-all" value="all" checked>
+                                <label for="client-all">Все</label>
+                            </div>
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-cumulative" value="cumulative">
+                                <label for="client-cumulative">Общая</label>
+                            </div>
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-sender" value="sender">
+                                <label for="client-sender">Отправитель</label>
+                            </div>
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-receiver" value="receiver">
+                                <label for="client-receiver">Получатель</label>
+                            </div>
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-third-party" value="third_party">
+                                <label for="client-third-party">Третье лицо</label>
+                            </div>
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="client-not-specified" value="not_specified">
+                                <label for="client-not-specified">Не указан</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Выбор статуса -->
+                <div class="flex items-center">
+                    <span class="text-sm font-medium text-gray-700 mr-3">Статус:</span>
+                    <div class="multi-select-container">
+                        <div class="multi-select-button" id="status-button">
+                            <span id="status-text">Все статусы</span>
+                            <svg class="dropdown-arrow" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="multi-select-dropdown" id="status-dropdown">
+                            <div class="multi-select-option">
+                                <input type="checkbox" id="status-all" value="all" checked>
+                                <label for="status-all">Все статусы</label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1049,7 +1181,6 @@
                     "Тематики ВИ - ВИ Отправитель/получатель": 17,
                     "Оплата - Сайт*": 17,
                     "Сервисы  - Наложка": 16,
-                    "Сервисы  - Авито": 16,
                     "Сервисы  - ОЗОН": 16,
                     "Тематики ВИ - ВИ Адрес доставки": 14,
                     "*Заявка.* - Оформление": 13,
@@ -1414,7 +1545,6 @@
                     "Тематики ВИ - ВИ Отправитель/получатель": 17,
                     "Оплата - Сайт*": 17,
                     "Сервисы  - Наложка": 16,
-                    "Сервисы  - Авито": 16,
                     "Сервисы  - ОЗОН": 16,
                     "Тематики ВИ - ВИ Адрес доставки": 14,
                     "*Заявка.* - Оформление": 13,
@@ -1591,7 +1721,8 @@
 
         // --- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ---
         let currentState = {
-            client: 'all',
+            clients: ['all'], // Массив выбранных типов клиентов
+            statuses: ['all'], // Массив выбранных статусов
             showPercents: true,
             hideZeros: true,
             showValuesOnBars: true,
@@ -1790,6 +1921,239 @@
             return { labels, datasets };
         };
         
+        // Функция для фильтрации данных по множественным статусам
+        const filterDataByMultipleStatuses = (data, selectedStatuses) => {
+            if (selectedStatuses.includes('all')) {
+                return data;
+            }
+            
+            const filteredData = {};
+            
+            // Получаем общее количество обращений с выбранными статусами
+            let totalSelectedStatusCount = 0;
+            if (data.orderStatus && data.orderStatus.data) {
+                selectedStatuses.forEach(status => {
+                    if (data.orderStatus.data[status]) {
+                        if (typeof data.orderStatus.data[status] === 'number') {
+                            totalSelectedStatusCount += data.orderStatus.data[status];
+                        } else if (typeof data.orderStatus.data[status] === 'object' && data.orderStatus.data[status].total) {
+                            totalSelectedStatusCount += data.orderStatus.data[status].total;
+                        }
+                    }
+                });
+            }
+            
+            // Получаем общее количество обращений для данного типа клиента
+            let totalCount = 0;
+            if (data.orderStatus && data.orderStatus.data) {
+                Object.values(data.orderStatus.data).forEach(count => {
+                    if (typeof count === 'number') {
+                        totalCount += count;
+                    } else if (typeof count === 'object' && count.total) {
+                        totalCount += count.total;
+                    }
+                });
+            }
+            
+            // Вычисляем коэффициент пропорциональности
+            const proportionFactor = totalCount > 0 ? totalSelectedStatusCount / totalCount : 0;
+            
+            Object.keys(data).forEach(category => {
+                if (data[category] && data[category].data) {
+                    // Если это категория orderStatus, фильтруем по выбранным статусам
+                    if (category === 'orderStatus') {
+                        const filteredStatusData = {};
+                        selectedStatuses.forEach(status => {
+                            if (data.orderStatus.data[status]) {
+                                filteredStatusData[status] = data.orderStatus.data[status];
+                            }
+                        });
+                        
+                        filteredData[category] = {
+                            ...data[category],
+                            data: filteredStatusData
+                        };
+                    } else {
+                        // Для других категорий применяем пропорциональное распределение
+                        const proportionalData = {};
+                        Object.keys(data[category].data).forEach(key => {
+                            const originalValue = data[category].data[key];
+                            
+                            // Проверяем, является ли значение объектом (для накопительных данных)
+                            if (typeof originalValue === 'object' && originalValue !== null) {
+                                const proportionalValue = {};
+                                Object.keys(originalValue).forEach(subKey => {
+                                    if (subKey === 'total') {
+                                        proportionalValue[subKey] = Math.round(originalValue[subKey] * proportionFactor);
+                                    } else {
+                                        proportionalValue[subKey] = Math.round(originalValue[subKey] * proportionFactor);
+                                    }
+                                });
+                                proportionalData[key] = proportionalValue;
+                            } else {
+                                // Для обычных числовых значений
+                                proportionalData[key] = Math.round(originalValue * proportionFactor);
+                            }
+                        });
+                        
+                        filteredData[category] = {
+                            ...data[category],
+                            data: proportionalData
+                        };
+                    }
+                }
+            });
+            
+            return filteredData;
+        };
+
+        // Функция для фильтрации данных по статусу (для обратной совместимости)
+        const filterDataByStatus = (data, selectedStatus) => {
+            return filterDataByMultipleStatuses(data, [selectedStatus]);
+        };
+
+        // Функция для создания агрегированных данных с учетом фильтрации по статусу
+        const createAggregatedDataWithStatusFilter = (selectedStatus) => {
+            if (selectedStatus === 'all') {
+                return aggregateAllClientData();
+            }
+            
+            const aggregatedData = {};
+            
+            // Получаем все ключи из первого типа клиента для структуры
+            const firstClientKey = Object.keys(allData)[0];
+            const firstClientData = allData[firstClientKey];
+            
+            // Проходим по всем категориям данных
+            Object.keys(firstClientData).forEach(categoryKey => {
+                aggregatedData[categoryKey] = {
+                    title: firstClientData[categoryKey].title,
+                    type: firstClientData[categoryKey].type,
+                    data: {}
+                };
+                
+                // Собираем все уникальные ключи из всех типов клиентов для данной категории
+                const allKeys = new Set();
+                Object.values(allData).forEach(clientData => {
+                    if (clientData[categoryKey] && clientData[categoryKey].data) {
+                        Object.keys(clientData[categoryKey].data).forEach(key => {
+                            allKeys.add(key);
+                        });
+                    }
+                });
+                
+                // Суммируем значения по всем типам клиентов
+                allKeys.forEach(key => {
+                    let totalValue = 0;
+                    Object.values(allData).forEach(clientData => {
+                        if (clientData[categoryKey] && clientData[categoryKey].data && clientData[categoryKey].data[key]) {
+                            totalValue += clientData[categoryKey].data[key];
+                        }
+                    });
+                    aggregatedData[categoryKey].data[key] = totalValue;
+                });
+            });
+            
+            // Применяем фильтрацию по статусу
+            return filterDataByStatus(aggregatedData, selectedStatus);
+        };
+
+        // Функция для создания накопительных данных с учетом фильтрации по статусу
+        const createCumulativeDataWithStatusFilter = (selectedStatuses) => {
+            if (selectedStatuses.includes('all')) {
+                return createCumulativeData();
+            }
+            
+            const cumulativeData = {};
+            
+            // Получаем все ключи из первого типа клиента для структуры
+            const firstClientKey = Object.keys(allData)[0];
+            const firstClientData = allData[firstClientKey];
+            
+            // Проходим по всем категориям данных
+            Object.keys(firstClientData).forEach(categoryKey => {
+                cumulativeData[categoryKey] = {
+                    title: firstClientData[categoryKey].title,
+                    type: firstClientData[categoryKey].type,
+                    data: {}
+                };
+                
+                // Собираем все уникальные ключи из всех типов клиентов для данной категории
+                const allKeys = new Set();
+                Object.values(allData).forEach(clientData => {
+                    if (clientData[categoryKey] && clientData[categoryKey].data) {
+                        Object.keys(clientData[categoryKey].data).forEach(key => {
+                            allKeys.add(key);
+                        });
+                    }
+                });
+                
+                allKeys.forEach(key => {
+                    const clientTypeData = {};
+                    let totalValue = 0;
+                    
+                    // Собираем данные по каждому типу клиента
+                    Object.entries(allData).forEach(([clientType, clientData]) => {
+                        if (clientData && clientData[categoryKey] && clientData[categoryKey].data && clientData[categoryKey].data[key]) {
+                            const value = clientData[categoryKey].data[key];
+                            clientTypeData[clientType] = value;
+                            totalValue += value;
+                        } else {
+                            clientTypeData[clientType] = 0;
+                        }
+                    });
+                    
+                    clientTypeData.total = totalValue;
+                    cumulativeData[categoryKey].data[key] = clientTypeData;
+                });
+            });
+            
+            // Применяем фильтрацию по статусам
+            return filterDataByMultipleStatuses(cumulativeData, selectedStatuses);
+        };
+
+        // Функция для создания объединенных данных с учетом множественного выбора
+        const createCombinedDataWithStatusFilter = (selectedClients, selectedStatuses) => {
+            const combinedData = {};
+            
+            // Получаем все ключи из первого типа клиента для структуры
+            const firstClientKey = Object.keys(allData)[0];
+            const firstClientData = allData[firstClientKey];
+            
+            // Проходим по всем категориям данных
+            Object.keys(firstClientData).forEach(categoryKey => {
+                combinedData[categoryKey] = {
+                    title: firstClientData[categoryKey].title,
+                    type: firstClientData[categoryKey].type,
+                    data: {}
+                };
+                
+                // Собираем все уникальные ключи из выбранных типов клиентов
+                const allKeys = new Set();
+                selectedClients.forEach(clientType => {
+                    if (allData[clientType] && allData[clientType][categoryKey] && allData[clientType][categoryKey].data) {
+                        Object.keys(allData[clientType][categoryKey].data).forEach(key => {
+                            allKeys.add(key);
+                        });
+                    }
+                });
+                
+                // Суммируем значения по выбранным типам клиентов
+                allKeys.forEach(key => {
+                    let totalValue = 0;
+                    selectedClients.forEach(clientType => {
+                        if (allData[clientType] && allData[clientType][categoryKey] && allData[clientType][categoryKey].data && allData[clientType][categoryKey].data[key]) {
+                            totalValue += allData[clientType][categoryKey].data[key];
+                        }
+                    });
+                    combinedData[categoryKey].data[key] = totalValue;
+                });
+            });
+            
+            // Применяем фильтрацию по статусам
+            return filterDataByMultipleStatuses(combinedData, selectedStatuses);
+        };
+
         const updateDashboard = () => {
             chartsGrid.innerHTML = '';
             createCharts();
@@ -1799,22 +2163,29 @@
             chartInstances = {};
             let dataForClient;
             
-            // Если выбран "Все", используем агрегированные данные
-            if (currentState.client === 'all') {
-                dataForClient = aggregateAllClientData();
-            } else if (currentState.client === 'cumulative') {
-                // Если выбран "Общая", используем накопительные данные
-                dataForClient = createCumulativeData();
+            // Определяем, какие типы клиентов выбраны
+            const selectedClients = currentState.clients.includes('all') 
+                ? Object.keys(allData).filter(key => key !== 'not_specified')
+                : currentState.clients;
+            
+            // Если выбран только "cumulative", используем накопительные данные
+            if (selectedClients.length === 1 && selectedClients[0] === 'cumulative') {
+                dataForClient = createCumulativeDataWithStatusFilter(currentState.statuses);
+            } else if (selectedClients.includes('cumulative') && selectedClients.length > 1) {
+                // Если выбран "cumulative" вместе с другими типами, объединяем данные
+                dataForClient = createCombinedDataWithStatusFilter(selectedClients, currentState.statuses);
             } else {
-                dataForClient = allData[currentState.client];
+                // Для обычных типов клиентов
+                dataForClient = createCombinedDataWithStatusFilter(selectedClients, currentState.statuses);
             }
             
-            console.log('Current client:', currentState.client);
+            console.log('Selected clients:', currentState.clients);
+            console.log('Selected statuses:', currentState.statuses);
             console.log('Data for client:', dataForClient);
             console.log('All data keys:', Object.keys(allData));
 
             if (!dataForClient || Object.keys(dataForClient).length === 0) {
-                console.log('No data found for client:', currentState.client);
+                console.log('No data found for selected clients:', currentState.clients);
                 return;
             }
 
@@ -2036,13 +2407,6 @@
         };
 
         // --- ОБРАБОТЧИКИ СОБЫТИЙ ---
-        document.getElementById('client-type-selector').addEventListener('change', (e) => {
-            const selectedClient = e.target.value;
-            if (selectedClient && selectedClient !== currentState.client) {
-                currentState.client = selectedClient;
-                updateDashboard();
-            }
-        });
 
         document.getElementById('hideZeros').addEventListener('change', (e) => {
             currentState.hideZeros = e.target.checked;
@@ -2064,9 +2428,273 @@
             updateDashboard();
         });
 
+        // Функции для управления множественным выбором
+        const initializeMultiSelect = () => {
+            // Инициализация выпадающих списков
+            const clientButton = document.getElementById('client-type-button');
+            const clientDropdown = document.getElementById('client-type-dropdown');
+            const statusButton = document.getElementById('status-button');
+            const statusDropdown = document.getElementById('status-dropdown');
+
+            // Обработчики для типа клиента
+            clientButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleDropdown(clientDropdown, clientButton);
+            });
+
+            // Обработчики для статуса
+            statusButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleDropdown(statusDropdown, statusButton);
+            });
+
+            // Предотвращаем закрытие при клике внутри выпадающего списка
+            clientDropdown.addEventListener('click', (e) => { e.stopPropagation(); });
+            statusDropdown.addEventListener('click', (e) => { e.stopPropagation(); });
+
+            // Обработчики для чекбоксов типа клиента
+            const clientCheckboxes = document.querySelectorAll('#client-type-dropdown input[type="checkbox"]');
+            clientCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.id === 'client-all') {
+                        // Переключение «Все» — отмечаем/снимаем все остальные
+                        const others = document.querySelectorAll('#client-type-dropdown input[type="checkbox"]:not(#client-all)');
+                        others.forEach(cb => { cb.checked = checkbox.checked; });
+                    } else {
+                        // Синхронизация состояния «Все» при выборе отдельных
+                        const others = Array.from(document.querySelectorAll('#client-type-dropdown input[type="checkbox"]:not(#client-all)'));
+                        const allChecked = others.length > 0 && others.every(cb => cb.checked);
+                        const noneChecked = others.every(cb => !cb.checked);
+                        const allBox = document.getElementById('client-all');
+                        allBox.checked = allChecked;
+                        if (noneChecked) { allBox.checked = false; }
+                    }
+                    updateClientSelection();
+                });
+            });
+
+            // Обработчики для чекбоксов статуса
+            const statusCheckboxes = document.querySelectorAll('#status-dropdown input[type="checkbox"]');
+            statusCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.id === 'status-all') {
+                        const others = document.querySelectorAll('#status-dropdown input[type="checkbox"]:not(#status-all)');
+                        others.forEach(cb => { cb.checked = checkbox.checked; });
+                    } else {
+                        const others = Array.from(document.querySelectorAll('#status-dropdown input[type="checkbox"]:not(#status-all)'));
+                        const allChecked = others.length > 0 && others.every(cb => cb.checked);
+                        const noneChecked = others.every(cb => !cb.checked);
+                        const allBox = document.getElementById('status-all');
+                        allBox.checked = allChecked;
+                        if (noneChecked) { allBox.checked = false; }
+                    }
+                    updateStatusSelection();
+                });
+            });
+
+            // Закрытие выпадающих списков при клике вне их
+            document.addEventListener('click', () => {
+                closeAllDropdowns();
+            });
+        };
+
+        const toggleDropdown = (dropdown, button) => {
+            const isOpen = dropdown.classList.contains('show');
+            closeAllDropdowns();
+            
+            if (!isOpen) {
+                dropdown.classList.add('show');
+                button.querySelector('.dropdown-arrow').classList.add('rotated');
+                adjustDropdownPosition(dropdown, button);
+            }
+        };
+
+        const adjustDropdownPosition = (dropdown, button) => {
+            // Сбрасываем возможные прошлые расстановки
+            dropdown.style.left = '';
+            dropdown.style.right = '';
+            dropdown.style.top = '100%';
+            dropdown.style.bottom = '';
+            dropdown.style.maxHeight = '';
+
+            const rect = dropdown.getBoundingClientRect();
+            const btnRect = button.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const padding = 16;
+
+            // Горизонтальная корректировка: если вылезает вправо — прижимаем к правому краю контейнера
+            if (rect.right > viewportWidth - padding) {
+                dropdown.style.left = 'auto';
+                dropdown.style.right = '0px';
+            }
+
+            // Вертикальная корректировка: если не помещается вниз — открываем вверх
+            // Пересчитываем после возможной горизонтальной корректировки
+            const updatedRect = dropdown.getBoundingClientRect();
+            if (updatedRect.bottom > viewportHeight - padding) {
+                dropdown.style.top = 'auto';
+                dropdown.style.bottom = '100%';
+                const availableTop = btnRect.top - padding; // место выше кнопки
+                dropdown.style.maxHeight = Math.max(160, Math.floor(availableTop)).toString() + 'px';
+            } else {
+                // Иначе ограничиваем высоту местом снизу
+                const availableBottom = viewportHeight - btnRect.bottom - padding;
+                dropdown.style.maxHeight = Math.max(160, Math.floor(availableBottom)).toString() + 'px';
+            }
+        };
+
+        const closeAllDropdowns = () => {
+            const dropdowns = document.querySelectorAll('.multi-select-dropdown');
+            const arrows = document.querySelectorAll('.dropdown-arrow');
+            
+            dropdowns.forEach(dropdown => dropdown.classList.remove('show'));
+            arrows.forEach(arrow => arrow.classList.remove('rotated'));
+        };
+
+        const updateClientSelection = () => {
+            const others = Array.from(document.querySelectorAll('#client-type-dropdown input[type="checkbox"]:not(#client-all)'));
+            const allBox = document.getElementById('client-all');
+            const selectedValues = others.filter(cb => cb.checked).map(cb => cb.value);
+
+            if (allBox.checked) {
+                currentState.clients = ['all'];
+            } else if (selectedValues.length === 0) {
+                // Пустой выбор — ничего не отображаем
+                currentState.clients = [];
+            } else {
+                currentState.clients = selectedValues;
+            }
+            updateClientButtonText();
+            updateDashboard();
+        };
+
+        const updateStatusSelection = () => {
+            const others = Array.from(document.querySelectorAll('#status-dropdown input[type="checkbox"]:not(#status-all)'));
+            const allBox = document.getElementById('status-all');
+            const selectedValues = others.filter(cb => cb.checked).map(cb => cb.value);
+
+            if (allBox.checked) {
+                currentState.statuses = ['all'];
+            } else if (selectedValues.length === 0) {
+                currentState.statuses = [];
+            } else {
+                currentState.statuses = selectedValues;
+            }
+            updateStatusButtonText();
+            updateDashboard();
+        };
+
+        const updateClientButtonText = () => {
+            const textElement = document.getElementById('client-type-text');
+            const button = document.getElementById('client-type-button');
+            
+            if (currentState.clients.length === 0) {
+                textElement.textContent = 'Ничего не выбрано';
+                button.classList.remove('active');
+                return;
+            }
+            if (currentState.clients.length === 1 && currentState.clients[0] === 'all') {
+                textElement.textContent = 'Все';
+                button.classList.add('active');
+            } else if (currentState.clients.length === 1) {
+                const labels = {
+                    'cumulative': 'Общая',
+                    'sender': 'Отправитель',
+                    'receiver': 'Получатель',
+                    'third_party': 'Третье лицо',
+                    'not_specified': 'Не указан'
+                };
+                textElement.textContent = labels[currentState.clients[0]] || currentState.clients[0];
+                button.classList.add('active');
+            } else {
+                textElement.textContent = `Выбрано: ${currentState.clients.length}`;
+                button.classList.add('active');
+            }
+        };
+
+        const updateStatusButtonText = () => {
+            const textElement = document.getElementById('status-text');
+            const button = document.getElementById('status-button');
+            
+            if (currentState.statuses.length === 0) {
+                textElement.textContent = 'Ничего не выбрано';
+                button.classList.remove('active');
+                return;
+            }
+            if (currentState.statuses.length === 1 && currentState.statuses[0] === 'all') {
+                textElement.textContent = 'Все статусы';
+                button.classList.add('active');
+            } else if (currentState.statuses.length === 1) {
+                textElement.textContent = currentState.statuses[0];
+                button.classList.add('active');
+            } else {
+                textElement.textContent = `Выбрано: ${currentState.statuses.length}`;
+                button.classList.add('active');
+            }
+        };
+
+        // Функция для заполнения выпадающего списка статусов
+        const populateStatusSelector = () => {
+            const statusDropdown = document.getElementById('status-dropdown');
+            const allStatuses = new Set();
+            
+            // Собираем все уникальные статусы из всех типов клиентов
+            Object.values(allData).forEach(clientData => {
+                if (clientData.orderStatus && clientData.orderStatus.data) {
+                    Object.keys(clientData.orderStatus.data).forEach(status => {
+                        allStatuses.add(status);
+                    });
+                }
+            });
+            
+            // Очищаем выпадающий список и добавляем опцию "Все статусы"
+            statusDropdown.innerHTML = `
+                <div class="multi-select-option">
+                    <input type="checkbox" id="status-all" value="all" checked>
+                    <label for="status-all">Все статусы</label>
+                </div>
+            `;
+            
+            // Сортируем статусы и добавляем их в выпадающий список
+            const sortedStatuses = Array.from(allStatuses).sort();
+            sortedStatuses.forEach(status => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'multi-select-option';
+                optionDiv.innerHTML = `
+                    <input type="checkbox" id="status-${status.replace(/[^a-zA-Z0-9]/g, '-')}" value="${status}">
+                    <label for="status-${status.replace(/[^a-zA-Z0-9]/g, '-')}">${status}</label>
+                `;
+                statusDropdown.appendChild(optionDiv);
+            });
+            
+            // Добавляем обработчики событий для новых чекбоксов
+            const statusCheckboxes = document.querySelectorAll('#status-dropdown input[type="checkbox"]');
+            statusCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.id === 'status-all') {
+                        // Переключение «Все статусы» — отмечаем/снимаем все остальные
+                        const others = document.querySelectorAll('#status-dropdown input[type="checkbox"]:not(#status-all)');
+                        others.forEach(cb => { cb.checked = checkbox.checked; });
+                    } else {
+                        // Синхронизация состояния «Все статусы» при выборе отдельных
+                        const others = Array.from(document.querySelectorAll('#status-dropdown input[type="checkbox"]:not(#status-all)'));
+                        const allChecked = others.length > 0 && others.every(cb => cb.checked);
+                        const noneChecked = others.every(cb => !cb.checked);
+                        const allBox = document.getElementById('status-all');
+                        allBox.checked = allChecked;
+                        if (noneChecked) { allBox.checked = false; }
+                    }
+                    updateStatusSelection();
+                });
+            });
+        };
+
         // --- ИНИЦИАЛИЗАЦИЯ ---
         console.log('Chart.js loaded:', typeof Chart !== 'undefined');
         console.log('All data structure:', allData);
+        initializeMultiSelect();
+        populateStatusSelector();
         createCharts();
     });
 </script>
